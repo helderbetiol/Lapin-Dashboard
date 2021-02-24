@@ -13,6 +13,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/dashboard',
   },
   {
+    title: 'Fichiers',
+    icon: 'arrow-circle-down-outline',
+    link: '/pages/tables/tree-grid',
+  },
+  {
     title: 'Injections',
     icon: 'edit-2-outline',
     link: '/pages/dashboard',
