@@ -4,7 +4,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Graphiques',
     icon: 'pie-chart-outline',
-    link: '/pages/dashboard',
+    link: '/pages/charts/chartjs',
     home: true,
   },
   {
