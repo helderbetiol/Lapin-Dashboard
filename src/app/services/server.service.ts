@@ -23,7 +23,7 @@ const headers = new HttpHeaders().set('Content-Type', 'application/vnd.flux').se
   providedIn: 'root',
 })
 export class ServerService {
-  private baseUrl =  'http://127.0.0.1:8000/';
+  private baseUrl =  'https://lapin-influx.osc-fr1.scalingo.io/';
 
   constructor(private http: HttpClient) { }
 
