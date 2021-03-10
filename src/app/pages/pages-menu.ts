@@ -10,7 +10,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'LIVE',
     icon: 'message-circle-outline',
-    link: '/pages/dashboard',
+    link: '/pages/charts/chartjs-live',
   },
   {
     title: 'Fichiers',

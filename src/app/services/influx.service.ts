@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ServerService } from './server.service';
+import {HttpParams} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InfluxQueryService {
-  private url = 'api/v2/query';
+  private url = 'lapin/';
 
   constructor(private serverService: ServerService) { }
 
-  getData = () => {
-    return this.serverService.post(this.url, 'from(bucket:"rabbit") |> range(start: 0)  |> filter(fn:(r) => r._measurement == "adrenaline")');
+  getData = (measure, group, field, limit) => {
+    const params = new HttpParams().set('limit', limit).set('field', field);
+    return this.serverService.get(this.url + measure + '/' + group, params);
   }
 
   getIntents = () => {

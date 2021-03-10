@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'ngx-charts',
+  selector: 'ngx-chartjs-line',
   template: `
     <router-outlet></router-outlet>
   `,

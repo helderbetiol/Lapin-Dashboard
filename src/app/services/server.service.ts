@@ -23,7 +23,7 @@ const headers = new HttpHeaders().set('Content-Type', 'application/vnd.flux').se
   providedIn: 'root',
 })
 export class ServerService {
-  private baseUrl =  'http://localhost:8086/';
+  private baseUrl =  'http://127.0.0.1:8000/';
 
   constructor(private http: HttpClient) { }
 

@@ -4,7 +4,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { ChartsComponent } from './charts.component';
 import { EchartsComponent } from './echarts/echarts.component';
 import { D3Component } from './d3/d3.component';
-import { ChartjsComponent } from './chartjs/chartjs.component';
+import {ChartjsLineComponent} from './chartjs/chartjs-line.component';
+import {ChartjsLineLiveComponent} from './chartsjs-live/chartjs-line-live.component';
 
 const routes: Routes = [{
   path: '',
@@ -17,8 +18,12 @@ const routes: Routes = [{
     component: D3Component,
   }, {
     path: 'chartjs',
-    component: ChartjsComponent,
-  }],
+    component: ChartjsLineComponent,
+  }, {
+    path: 'chartjs-live',
+    component: ChartjsLineLiveComponent,
+  }
+  ],
 }];
 
 @NgModule({
@@ -31,5 +36,6 @@ export const routedComponents = [
   ChartsComponent,
   EchartsComponent,
   D3Component,
-  ChartjsComponent,
+  ChartjsLineComponent,
+  ChartjsLineLiveComponent,
 ];
