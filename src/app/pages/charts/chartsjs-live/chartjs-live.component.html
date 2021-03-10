@@ -11,6 +11,7 @@
       <nb-option *ngFor="let groupId of [1,2,3,4,5,6,7,8,9,10]" [value]="groupId">Groupe {{ groupId }}</nb-option>
     </nb-select>
     <nb-select [(selected)]="selectedField" (selectedChange)="changeField($event)">
+      <nb-option value="Tous">Toutes les mesures</nb-option>
       <nb-option value="FrequenceCardiaque">Fréquence Cardiaque</nb-option>
       <nb-option value="PressionArterielle">Pression Artérielle</nb-option>
       <nb-option value="FrequenceRespiratoire">Fréquence Respiratoire</nb-option>
@@ -21,12 +22,12 @@
       <nb-option value="10000">10.000</nb-option>
       <nb-option value="100000">100.000</nb-option>
     </nb-select>
-    <button nbButton [status]="statusButton" size="small" (click)="applySelection()">
-      {{ textButton }}
+    <button nbButton [status]="startBtnStatus" size="small" (click)="applySelection()">
+      {{ startBtnText }}
     </button>
-    <button *ngIf="statusButton != 'primary'" nbButton [status]="statusPause" size="small" (click)="pauseTimer()">
-      {{ textPause }}
+    <button *ngIf="startBtnStatus != 'primary'" nbButton [status]="pauseBtnStatus" size="small" (click)="pauseTimer()">
+      {{ pauseBtnText }}
     </button>
-    <chart type="line" [data]="dataFC" [options]="options"></chart>
+    <chart type="line" [data]="data" [options]="options"></chart>
   </nb-card-body>
 </nb-card>

@@ -1,5 +1,5 @@
-import { Component, OnDestroy } from '@angular/core';
-import { NbThemeService, NbColorHelper } from '@nebular/theme';
+import {Component, OnDestroy} from '@angular/core';
+import {NbThemeService, NbColorHelper} from '@nebular/theme';
 import {InfluxQueryService} from '../../../services/influx.service';
 
 @Component({
@@ -8,26 +8,28 @@ import {InfluxQueryService} from '../../../services/influx.service';
   templateUrl: './chartjs-live.component.html',
 })
 export class ChartjsLineLiveComponent implements OnDestroy {
-  dataFC: any;
-  dataFR: any;
-  dataPA: any;
+  data: any;
   colors: any;
   options: any;
   themeSubscription: any;
   selectedMeasure: any = 'adrenaline';
-  selectedField: any = 'FrequenceCardiaque';
+  selectedField: any = 'Tous';
   selectedGroup: any = 1;
   selectedLimit: any = '100';
   labelsFrom: any;
-  dataPointsFrom: any;
   labelsTo: any;
-  dataPointsTo: any;
+  dataPointsFCFrom: any;
+  dataPointsFCTo: any;
+  dataPointsFRFrom: any;
+  dataPointsFRTo: any;
+  dataPointsPAFrom: any;
+  dataPointsPATo: any;
   timeLeft: number = 60;
   interval;
-  statusButton: any = 'primary';
-  textButton: string = 'Démarrer';
-  statusPause: any = 'warning';
-  textPause: string = 'Pause';
+  startBtnStatus: any = 'primary';
+  startBtnText: string = 'Démarrer';
+  pauseBtnStatus: any = 'warning';
+  pauseBtnText: string = 'Pause';
   paused: boolean = false;
 
   constructor(private theme: NbThemeService, private service: InfluxQueryService) {
@@ -37,27 +39,6 @@ export class ChartjsLineLiveComponent implements OnDestroy {
 
       this.colors = config.variables;
       const chartjs: any = config.variables.chartjs;
-
-      // this.data = {
-      //   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      //   datasets: [{
-      //     data: [65, 59, 80, 81, 56, 55, 40],
-      //     label: 'Lapin 1',
-      //     backgroundColor: NbColorHelper.hexToRgbA(this.colors.primary, 0.3),
-      //     borderColor: this.colors.primary,
-      //   }, {
-      //     data: [28, 48, 40, 19, 86, 27, 90],
-      //     label: 'Lapin 2',
-      //     backgroundColor: NbColorHelper.hexToRgbA(this.colors.danger, 0.3),
-      //     borderColor: this.colors.danger,
-      //   }, {
-      //     data: [18, 48, 77, 9, 100, 27, 40],
-      //     label: 'Lapin 3',
-      //     backgroundColor: NbColorHelper.hexToRgbA(this.colors.info, 0.3),
-      //     borderColor: this.colors.info,
-      //   },
-      //   ],
-      // };
 
       this.options = {
         responsive: true,
@@ -105,88 +86,89 @@ export class ChartjsLineLiveComponent implements OnDestroy {
   changeMeasure(newValue): void {
     this.selectedMeasure = newValue;
   }
+
   changeField(newValue): void {
+    clearInterval(this.interval);
+    this.pauseBtnText = 'Continuer';
+    this.pauseBtnStatus = 'primary';
+    this.paused = true;
     this.selectedField = newValue;
   }
+
   changeGroup(newValue): void {
     this.selectedGroup = newValue;
   }
+
   changeLimit(newValue): void {
     this.selectedLimit = newValue;
   }
 
   applySelection() {
-    if (this.statusButton === 'primary') {
-      this.updateData();
-      this.statusButton = 'danger';
-      this.textButton = 'Redémarrer';
-      this.paused = false;
+    if (this.startBtnStatus === 'primary') {
+      this.startBtnStatus = 'danger';
+      this.startBtnText = 'Redémarrer';
     } else {
       clearInterval(this.interval);
-      this.updateData();
-      // this.statusButton = 'primary';
-      // this.textButton = 'Démarrer';
     }
+    this.updateData();
     this.paused = false;
-    this.textPause = 'Pause';
-    this.statusPause = 'warning';
+    this.pauseBtnText = 'Pause';
+    this.pauseBtnStatus = 'warning';
   }
 
   updateData() {
-    this.service.getData(this.selectedMeasure, this.selectedGroup, this.selectedField, this.selectedLimit)
+    this.service.getData(this.selectedMeasure, this.selectedGroup, 'PressionArterielle', this.selectedLimit)
       .subscribe((data) => {
-        console.log(data);
-
-        const labels = [];
-        const dataPoints = [];
+        let labels = [];
+        let dataPoints = [];
         // @ts-ignore
         data.forEach((point) => {
           labels.push(point['time'].substring(14, 23));
-          dataPoints.push(point[this.selectedField]);
+          dataPoints.push(point['PressionArterielle']);
         });
-
         this.labelsFrom = labels.reverse();
-        this.dataPointsFrom = dataPoints.reverse();
-        console.log(labels);
-        console.log(dataPoints);
-
+        this.dataPointsPAFrom = dataPoints.reverse();
         this.labelsTo = [this.labelsFrom.pop()];
-        this.dataPointsTo = [this.dataPointsFrom.pop()];
+        this.dataPointsPATo = [this.dataPointsPAFrom.pop()];
 
-        this.dataFC = {
-          labels: this.labelsTo,
-          datasets: [{
-            data: this.dataPointsTo,
-            label: 'Lapin ' + this.selectedGroup + ' ' + this.selectedMeasure + ' ' + this.selectedField ,
-            backgroundColor: NbColorHelper.hexToRgbA(this.colors.primary, 0.3),
-            borderColor: this.colors.primary,
-          },
-          ],
-        };
-        console.log(this.dataFC.datasets[0].data);
-        this.startTimer();
+        this.service.getData(this.selectedMeasure, this.selectedGroup, 'FrequenceCardiaque', this.selectedLimit)
+          .subscribe((data) => {
+            labels = [];
+            dataPoints = [];
+            // @ts-ignore
+            data.forEach((point) => {
+              dataPoints.push(point['FrequenceCardiaque']);
+            });
+            this.dataPointsFCFrom = dataPoints.reverse();
+            this.dataPointsFCTo = [this.dataPointsFCFrom.pop()];
+
+            this.service.getData(this.selectedMeasure, this.selectedGroup, 'FrequenceRespiratoire', this.selectedLimit)
+              .subscribe((data) => {
+                labels = [];
+                dataPoints = [];
+                // @ts-ignore
+                data.forEach((point) => {
+                  dataPoints.push(point['FrequenceRespiratoire']);
+                });
+                this.dataPointsFRFrom = dataPoints.reverse();
+                this.dataPointsFRTo = [this.dataPointsFRFrom.pop()];
+
+                this.updateChartData();
+                this.startTimer();
+              });
+          });
       });
   }
 
   startTimer() {
-    console.log('startTimer!');
     this.interval = setInterval(() => {
       if (this.timeLeft > 0) {
-        console.log('update');
         this.timeLeft--;
-        // this.data.datasets[0].data.push(this.dataPoints.pop());
         this.labelsTo.push(this.labelsFrom.pop());
-        this.dataPointsTo.push(this.dataPointsFrom.pop());
-        this.dataFC = {
-          labels: this.labelsTo,
-          datasets: [{
-            data: this.dataPointsTo,
-            label: 'Lapin ' + this.selectedGroup + ' ' + this.selectedMeasure + ' ' + this.selectedField ,
-            backgroundColor: NbColorHelper.hexToRgbA(this.colors.primary, 0.3),
-            borderColor: this.colors.primary,
-          },
-          ],
-        };
+        this.dataPointsFCTo.push(this.dataPointsFCFrom.pop());
+        this.dataPointsFRTo.push(this.dataPointsFRFrom.pop());
+        this.dataPointsPATo.push(this.dataPointsPAFrom.pop());
+        this.updateChartData();
       } else {
         this.timeLeft = 60;
       }
@@ -195,17 +177,63 @@ export class ChartjsLineLiveComponent implements OnDestroy {
 
   pauseTimer() {
     if (!this.paused) {
-      console.log('Pause');
       clearInterval(this.interval);
-      this.textPause = 'Continuer';
-      this.statusPause = 'primary';
+      this.pauseBtnText = 'Continuer';
+      this.pauseBtnStatus = 'primary';
       this.paused = true;
     } else {
       this.startTimer();
-      this.textPause = 'Pause';
-      this.statusPause = 'warning';
+      this.pauseBtnText = 'Pause';
+      this.pauseBtnStatus = 'warning';
       this.paused = false;
     }
   }
 
+  updateChartData() {
+    if (this.selectedField === 'PressionArterielle') {
+      this.updateChartDataField('PressionArterielle', this.dataPointsFRTo);
+    } else if (this.selectedField === 'FrequenceCardiaque') {
+      this.updateChartDataField('FrequenceCardiaque', this.dataPointsFRTo);
+    } else if (this.selectedField === 'FrequenceRespiratoire') {
+      this.updateChartDataField('FrequenceRespiratoire', this.dataPointsFRTo);
+    } else {
+      this.updateChartDataAll();
+    }
+  }
+
+  updateChartDataAll() {
+    this.data = {
+      labels: this.labelsTo,
+      datasets: [{
+        data: this.dataPointsFCTo,
+        label: 'FrequenceCardiaque',
+        backgroundColor: NbColorHelper.hexToRgbA(this.colors.primary, 0.3),
+        borderColor: this.colors.primary,
+      },
+        {
+          data: this.dataPointsPATo,
+          label: 'PressionArterielle',
+          backgroundColor: NbColorHelper.hexToRgbA(this.colors.danger, 0.3),
+          borderColor: this.colors.danger,
+        }, {
+          data: this.dataPointsFRTo,
+          label: 'FrequenceRespiratoire',
+          backgroundColor: NbColorHelper.hexToRgbA(this.colors.info, 0.3),
+          borderColor: this.colors.info,
+        },
+      ],
+    };
+  }
+
+  updateChartDataField(field, data) {
+    this.data = {
+      labels: this.labelsTo,
+      datasets: [{
+        data: data,
+        label: field,
+        backgroundColor: NbColorHelper.hexToRgbA(this.colors.primary, 0.3),
+        borderColor: this.colors.primary,
+      }],
+    };
+  }
 }
