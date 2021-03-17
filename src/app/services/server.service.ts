@@ -49,6 +49,10 @@ export class ServerService {
     return throwError(error.message || 'Error');
   }
 
+  getBaseUrl = (extension) => {
+    return this.baseUrl + extension;
+  }
+
   private getParams = (params = null) => {
     if (!params) {
       params = new HttpParams();

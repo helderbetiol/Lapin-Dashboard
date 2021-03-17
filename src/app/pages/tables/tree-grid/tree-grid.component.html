@@ -17,7 +17,7 @@
           <ngx-fs-icon [kind]="row.data.kind" [expanded]="row.expanded"></ngx-fs-icon>
 <!--          <a *ngIf="row.data.kind==='csv'; else kindDir" (click)="downloadCSV('export-text', 'adrenaline', '1')"-->
           <a *ngIf="row.data.kind==='csv'; else kindDir"
-             href="http://localhost:5000/lapin/csv/adrenaline/1?limit=10">
+              href="downloadCSV({{row.data[customColumn]}})">
             {{row.data[customColumn]}}
           </a>
           <ng-template #kindDir>

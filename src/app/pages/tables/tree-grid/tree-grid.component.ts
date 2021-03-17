@@ -51,24 +51,24 @@ export class TreeGridComponent {
     {
       data: { name: 'Adrenaline', size: '1.8 MB', items: 5, kind: 'dir' },
       children: [
-        { data: { name: 'group1-22-03-2016', kind: 'csv', size: '240 KB' } },
-        { data: { name: 'group2-22-03-2016', kind: 'csv', size: '290 KB' } },
-        { data: { name: 'group3-22-03-2016', kind: 'csv', size: '466 KB' } },
-        { data: { name: 'group4-22-03-2016', kind: 'csv', size: '900 KB' } },
+        { data: { name: 'Adrenaline-group1-22-03-2016', kind: 'csv', size: '240 KB' } },
+        { data: { name: 'Adrenaline-group2-22-03-2016', kind: 'csv', size: '290 KB' } },
+        { data: { name: 'Adrenaline-group3-22-03-2016', kind: 'csv', size: '466 KB' } },
+        { data: { name: 'Adrenaline-group4-22-03-2016', kind: 'csv', size: '900 KB' } },
       ],
     },
     {
       data: { name: 'Fréquence Cardiaque', kind: 'dir', size: '400 KB', items: 2 },
       children: [
-        { data: { name: 'group1-22-03-2016', kind: 'csv', size: '100 KB' } },
-        { data: { name: 'group2-22-03-2016', kind: 'csv', size: '300 KB' } },
+        { data: { name: 'Fréquence Cardiaque-group1-22-03-2016', kind: 'csv', size: '100 KB' } },
+        { data: { name: 'Fréquence Cardiaque-group2-22-03-2016', kind: 'csv', size: '300 KB' } },
       ],
     },
     {
       data: { name: 'Fréquence Respiratoire', kind: 'dir', size: '109 MB', items: 2 },
       children: [
-        { data: { name: 'group1-22-03-2016', kind: 'csv', size: '107 MB' } },
-        { data: { name: 'group2-22-03-2016', kind: 'csv', size: '2 MB' } },
+        { data: { name: 'Fréquence Respiratoire-group1-22-03-2016', kind: 'csv', size: '107 MB' } },
+        { data: { name: 'Fréquence Respiratoire-group2-22-03-2016', kind: 'csv', size: '2 MB' } },
       ],
     },
   ];
@@ -79,23 +79,35 @@ export class TreeGridComponent {
     return minWithForMultipleColumns + (nextColumnStep * index);
   }
 
-  downloadCSV(fileName: any, selectedMeasure: any, selectedGroup: any) {
+  downloadCSV(fileName: any) {
+    var temp = fileName.split("-");
+    var selectedMeasure = temp[0];
+    var selectedGroup = '';
+    for (let i=5; i < temp[1].length; i++)
+    {
+      selectedGroup += temp[1].charAt(i);
+    }
+    console.log('downloadCSV');
+    return this.service.getCSV(selectedMeasure, selectedGroup);
+  }
+
+  /* downloadCSV(fileName: any, selectedMeasure: any, selectedGroup: any) {
     console.log('downloadCSV');
     this.service.getCSV(selectedMeasure, selectedGroup)
       .subscribe((file) => {
         console.log("got file");
         console.log(file);
       const binaryFile = [];
-      binaryFile.push();
-      const filePath = URL.createObjectURL(file);
-      // const filePath = URL.createObjectURL(new Blob(binaryFile, {type: 'aplication/csv'}));
+      binaryFile.push(file);
+      //const filePath = URL.createObjectURL(file);
+      const filePath = URL.createObjectURL(new Blob(binaryFile, {type: 'aplication/csv'}));
       const hrefLink = document.createElement('a');
       hrefLink.href = filePath;
       hrefLink.setAttribute('download', fileName);
       document.body.appendChild(hrefLink);
       hrefLink.click();
     });
-  }
+  }*/
 
 }
 
