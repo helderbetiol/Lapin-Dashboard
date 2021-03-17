@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NbSortDirection, NbSortRequest, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import {InfluxQueryService} from '../../../services/influx.service';
 
 interface TreeNode<T> {
   data: T;
@@ -29,7 +30,8 @@ export class TreeGridComponent {
   sortColumn: string;
   sortDirection: NbSortDirection = NbSortDirection.NONE;
 
-  constructor(private dataSourceBuilder: NbTreeGridDataSourceBuilder<FSEntry>) {
+  constructor(private dataSourceBuilder: NbTreeGridDataSourceBuilder<FSEntry>, 
+              private service: InfluxQueryService) {
     this.dataSource = this.dataSourceBuilder.create(this.data);
   }
 
@@ -76,6 +78,22 @@ export class TreeGridComponent {
     const nextColumnStep = 100;
     return minWithForMultipleColumns + (nextColumnStep * index);
   }
+
+  downloadCSV(fileName: any, selectedMeasure: any, selectedGroup: any) {
+    this.service.getCSV(selectedMeasure, selectedGroup)
+      .subscribe((file) => {
+      const binaryFile = [];
+      binaryFile.push();
+      const filePath = URL.createObjectURL(file);
+      // const filePath = URL.createObjectURL(new Blob(binaryFile, {type: 'aplication/csv'}));
+      const hrefLink = document.createElement('a');
+      hrefLink.href = filePath;
+      hrefLink.setAttribute('download', fileName);
+      document.body.appendChild(hrefLink);
+      hrefLink.click();
+    });
+  }
+  
 }
 
 @Component({
