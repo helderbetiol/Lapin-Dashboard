@@ -18,17 +18,18 @@ import { throwError } from 'rxjs';
 // const username = 'root';
 // /**InfluxDB password  */
 // const password = 'root';
-const headers = new HttpHeaders().set('Content-Type', 'application/vnd.flux').set('Accept', 'application/csv').set('Access-Control-Allow-Origin', '*');
+const headers = new HttpHeaders().set('Content-Type', 'application/vnd.flux').set('Accept', 'text/csv').set('Access-Control-Allow-Origin', '*');
 @Injectable({
   providedIn: 'root',
 })
 export class ServerService {
-  private baseUrl =  'https://lapin-influx.osc-fr1.scalingo.io/';
+  private baseUrl =  'http://127.0.0.1:5000/';
 
   constructor(private http: HttpClient) { }
 
   get = <T>(extension, params = null) => {
-    return this.http.get<T>(this.baseUrl + extension, this.getParams(params)).pipe(catchError(this.handleError));
+    const options = { headers: headers, params: params, responseType: 'text' as any };
+    return this.http.get<T>(this.baseUrl + extension, options).pipe(catchError(this.handleError));
   }
 
   post = <T>(extension, data = {}) => {

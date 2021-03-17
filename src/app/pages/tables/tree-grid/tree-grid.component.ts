@@ -30,7 +30,7 @@ export class TreeGridComponent {
   sortColumn: string;
   sortDirection: NbSortDirection = NbSortDirection.NONE;
 
-  constructor(private dataSourceBuilder: NbTreeGridDataSourceBuilder<FSEntry>, 
+  constructor(private dataSourceBuilder: NbTreeGridDataSourceBuilder<FSEntry>,
               private service: InfluxQueryService) {
     this.dataSource = this.dataSourceBuilder.create(this.data);
   }
@@ -80,8 +80,11 @@ export class TreeGridComponent {
   }
 
   downloadCSV(fileName: any, selectedMeasure: any, selectedGroup: any) {
+    console.log('downloadCSV');
     this.service.getCSV(selectedMeasure, selectedGroup)
       .subscribe((file) => {
+        console.log("got file");
+        console.log(file);
       const binaryFile = [];
       binaryFile.push();
       const filePath = URL.createObjectURL(file);
@@ -93,7 +96,7 @@ export class TreeGridComponent {
       hrefLink.click();
     });
   }
-  
+
 }
 
 @Component({

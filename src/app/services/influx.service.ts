@@ -16,8 +16,9 @@ export class InfluxQueryService {
   }
 
   getCSV = (measure, group) => {
-    const params = new HttpParams().set('Content-Type', 'application/csv');
-    return this.serverService.get(this.url + 'csv/' + measure + '/' + group, {params, responseType: 'blob'});
+    const params = new HttpParams().set('limit', String(10));
+    // const params = new HttpParams().set('Content-Type', 'application/csv');
+    return this.serverService.get(this.url + 'csv/' + measure + '/' + group, params);
   }
 
   /* getCSV = (measure, group) => {
