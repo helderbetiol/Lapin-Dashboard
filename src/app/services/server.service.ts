@@ -28,8 +28,8 @@ export class ServerService {
   constructor(private http: HttpClient) { }
 
   get = <T>(extension, params = null) => {
-    const options = { headers: headers, params: params, responseType: 'text' as any };
-    return this.http.get<T>(this.baseUrl + extension, options).pipe(catchError(this.handleError));
+    // const options = { headers: headers, params: params, responseType: 'text' as any };
+    return this.http.get<T>(this.baseUrl + extension, this.getParams(params)).pipe(catchError(this.handleError));
   }
 
   post = <T>(extension, data = {}) => {
